@@ -95,30 +95,49 @@ class Main {
   // }
 
   _setAnimation() {
-    gsap.to(this.mesh.position, {
-      // x: 300,
-      z: 1000,
-      duration: 0.4,
-		  ease: "Expo.easeOut",
+
+    const tl1 = gsap.timeline({
       scrollTrigger: {
         trigger: '#section02',
         start: 'top center',
         toggleActions: 'play none none reverse',
         markers: true,
       }
+    });
+
+    tl1.to(this.mesh.position, {
+      z: 1000,
+      duration: 0.4,
+      ease: "Expo.easeOut",
     })
-    gsap.to(this.mesh.rotation, {
+    .to(this.mesh.rotation, {
       x: radian(45),
       y: radian(225),
       duration: 0.4,
 		  ease: "Expo.easeOut",
+    }, '-=0.2')
+    // .to(this.camera.position, {
+    //   x: 100,
+    //   // y: radian(225),
+    //   duration: 0.4,
+		//   ease: "Expo.easeOut",
+    // }, '-=0.2')
+
+    const tl2 = gsap.timeline({
       scrollTrigger: {
         trigger: '#section03',
         start: 'top center',
         toggleActions: 'play none none reverse',
         markers: true,
       }
+    });
+
+    tl2.to(this.camera.position, {
+      x: 100,
+      duration: 0.4,
+      ease: "Expo.easeOut",
     })
+    
   }
 
 
@@ -136,6 +155,8 @@ class Main {
     
     // this.mesh.rotation.y += 0.01;
     // this.mesh.rotation.x += 0.01;
+
+    // this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     //レンダリング
     this.renderer.render(this.scene, this.camera);
