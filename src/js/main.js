@@ -27,13 +27,16 @@ class Main {
 
     this.scene = new THREE.Scene();
     this.camera = null;
+
+    this.distance = null;
+
     this.mesh = null;
     this.group = new THREE.Group();
 
     // this.controls = null;
 
     this.lenis = new Lenis({
-      duration: 2.0,
+      duration: 1.5,
       // easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       // direction: 'vertical', // vertical, horizontal
       // gestureDirection: 'vertical', // vertical, horizontal, both
@@ -64,9 +67,9 @@ class Main {
     //ウインドウとWebGL座標を一致させる
     const fov = 45;
     const fovRadian = (fov / 2) * (Math.PI / 180); //視野角をラジアンに変換
-    const distance = (this.viewport.height / 2) / Math.tan(fovRadian); //ウインドウぴったりのカメラ距離
-    this.camera = new THREE.PerspectiveCamera(fov, this.viewport.width / this.viewport.height, 1, distance * 2);
-    this.camera.position.z = distance;
+    this.distance = (this.viewport.height / 2) / Math.tan(fovRadian); //ウインドウぴったりのカメラ距離
+    this.camera = new THREE.PerspectiveCamera(fov, this.viewport.width / this.viewport.height, 1, this.distance * 2);
+    this.camera.position.z = this.distance;
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     this.scene.add(this.camera);
   }
@@ -83,10 +86,20 @@ class Main {
   }
 
   _addMesh() {
-    const geometry = new THREE.BoxGeometry(50, 50, 50);
+    // const geometry = new THREE.BoxGeometry(50, 50, 50);
+    const geometry = new THREE.DodecahedronGeometry(50, 0);
     const material = new THREE.MeshStandardMaterial({color: 0x444444});
-    this.mesh = new THREE.Mesh(geometry, material);
-    this.group.add(this.mesh);
+
+    for(let i = 0; i < 4; i++){
+      const box = new THREE.Mesh(geometry, material);
+      box.position.z = 300 * Math.sin((i / 4) * Math.PI * 2);
+      box.position.x = 300 * Math.cos((i / 4) * Math.PI * 2);
+      
+      this.group.add(box);
+    }
+
+    this.group.position.z = this.distance;
+    this.group.rotation.x = radian(90);
     
   }
 
@@ -100,50 +113,63 @@ class Main {
 
     const tl1 = gsap.timeline({
       scrollTrigger: {
-        trigger: '#section02',
-        start: 'top center',
+        trigger: '#section01',
+        start: 'top top',
+        end: 'bottom top',
         toggleActions: 'play none none reverse',
         markers: true,
+        scrub: true,
       }
     });
-
-    tl1.to(this.mesh.position, {
-      z: 1000,
-      duration: 0.4,
-      ease: "Expo.easeOut",
+    tl1.to(this.group.rotation, {
+      x: radian(0),
+      // duration: 1.6,
+      ease: "Linear.easeNone",
     })
-    .to(this.group.rotation, {
-      x: radian(180),
-      y: radian(180),
-      duration: 1.4,
-      ease: "Expo.easeOut",
-    }, '-=0.4')
-    .to(this.mesh.rotation, {
-      x: radian(45),
-      y: radian(225),
-      duration: 0.4,
-		  ease: "Expo.easeOut",
-    }, '-=0.2')
-    // .to(this.camera.position, {
-    //   x: 100,
-    //   // y: radian(225),
-    //   duration: 0.4,
-		//   ease: "Expo.easeOut",
-    // }, '-=0.2')
+
 
     const tl2 = gsap.timeline({
       scrollTrigger: {
         trigger: '#section03',
-        start: 'top center',
+        start: 'top top',
         toggleActions: 'play none none reverse',
         markers: true,
       }
     });
+    tl2.to(this.group.rotation, {
+      y: radian(90),
+      duration: 1.2,
+      ease: "Expo.easeInOut",
+    })
 
-    tl2.to(this.camera.position, {
-      x: 100,
-      duration: 0.4,
-      ease: "Expo.easeOut",
+
+    const tl3 = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#section04',
+        start: 'top top',
+        toggleActions: 'play none none reverse',
+        markers: true,
+      }
+    });
+    tl3.to(this.group.rotation, {
+      y: radian(180),
+      duration: 1.2,
+      ease: "Expo.easeInOut",
+    })
+
+
+    const tl4 = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#section05',
+        start: 'top top',
+        toggleActions: 'play none none reverse',
+        markers: true,
+      }
+    });
+    tl4.to(this.group.rotation, {
+      y: radian(270),
+      duration: 1.2,
+      ease: "Expo.easeInOut",
     })
     
   }
@@ -161,12 +187,11 @@ class Main {
   _update(time) {
 
     this.lenis.raf(time);
+
+    for(let i = 0; i < this.group.children.length; i++) {
+      this.group.children[i].rotation.y += 0.005;
+    }
     
-    // this.mesh.rotation.y += 0.01;
-    // this.mesh.rotation.x += 0.01;
-
-    // this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-
     //レンダリング
     this.renderer.render(this.scene, this.camera);
     // this.controls.update();
