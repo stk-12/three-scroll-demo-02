@@ -28,6 +28,7 @@ class Main {
     this.scene = new THREE.Scene();
     this.camera = null;
     this.mesh = null;
+    this.group = new THREE.Group();
 
     // this.controls = null;
 
@@ -85,7 +86,8 @@ class Main {
     const geometry = new THREE.BoxGeometry(50, 50, 50);
     const material = new THREE.MeshStandardMaterial({color: 0x444444});
     this.mesh = new THREE.Mesh(geometry, material);
-    this.scene.add(this.mesh);
+    this.group.add(this.mesh);
+    
   }
 
   // _getScrollValue() {
@@ -110,6 +112,12 @@ class Main {
       duration: 0.4,
       ease: "Expo.easeOut",
     })
+    .to(this.group.rotation, {
+      x: radian(180),
+      y: radian(180),
+      duration: 1.4,
+      ease: "Expo.easeOut",
+    }, '-=0.4')
     .to(this.mesh.rotation, {
       x: radian(45),
       y: radian(225),
@@ -143,6 +151,7 @@ class Main {
 
 
   _init() {
+    this.scene.add(this.group);
     this._setCamera();
     // this._setControlls();
     this._setLight();
