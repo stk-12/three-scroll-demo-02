@@ -92,8 +92,8 @@ class Main {
 
     for(let i = 0; i < 4; i++){
       const box = new THREE.Mesh(geometry, material);
-      box.position.z = 300 * Math.sin((i / 4) * Math.PI * 2);
-      box.position.x = 300 * Math.cos((i / 4) * Math.PI * 2);
+      box.position.z = 200 * Math.sin((i / 4) * Math.PI * 2);
+      box.position.x = 200 * Math.cos((i / 4) * Math.PI * 2);
       
       this.group.add(box);
     }
@@ -137,7 +137,7 @@ class Main {
       }
     });
     tl2.to(this.group.rotation, {
-      y: radian(90),
+      y: radian(20),
       duration: 1.2,
       ease: "Expo.easeInOut",
     })
